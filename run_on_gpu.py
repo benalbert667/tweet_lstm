@@ -5,7 +5,7 @@ from custom_nets import LayeredLSTM
 from random import shuffle
 # %%
 
-with open('trump_tweets.txt', 'r') as file:
+with open('trump_tweets.txt', 'r', encoding='UTF-8') as file:
     data = file.readlines()
 # categories = set(_ for d in data for _ in d)
 categories = ('\n', ' ', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '+', ',', '-', '.', '/',
@@ -43,7 +43,7 @@ def input_target_pair(s):
     return inp.to(gpu), tar.to(gpu)
 
 
-for n_layers in (3, 6, 9, 12):
+for n_layers in (3, 6, 9, 12, 15):
     print('Training lstm of {} layers...'.format(n_layers))
     net = LayeredLSTM(n_letters, n_letters, num_layers=n_layers).to(gpu)
     criterion = nn.NLLLoss()
