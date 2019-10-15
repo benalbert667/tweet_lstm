@@ -44,9 +44,10 @@ class LSTM1(nn.Module):
         self.softmax = nn.LogSoftmax(dim=1)
 
     def init_states(self, random=False):
+        device = next(self.parameters()).device
         if random:
-            return torch.rand(self.h_s), torch.rand(self.h_s)
-        return torch.zeros(self.h_s), torch.zeros(self.h_s)
+            return torch.rand(self.h_s, device=device), torch.rand(self.h_s, device=device)
+        return torch.zeros(self.h_s, device=device), torch.zeros(self.h_s, device=device)
 
     def forward(self, x, h, cs):  # input, hidden state, cell state
         x = torch.cat((x, h), 1)
