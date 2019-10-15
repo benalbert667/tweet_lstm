@@ -28,29 +28,29 @@ gpu = torch.device('cuda:0')
 
 def input_target_pair(s):
     if s in categories:  # inputting letter by letter
-        inp = torch.zeros(1, 1, n_letters, device=gpu)
+        inp = torch.zeros(1, 1, n_letters)
         inp[0, 0, categories.index(s)] = 1
-        return inp
-    inp = torch.zeros(len(s), 1, n_letters, device=gpu)
+        return inp.to(gpu)
+    inp = torch.zeros(len(s), 1, n_letters)
     tar = []
     for i, c in enumerate(s):
         if i > 0:
             tar.append(categories.index(c))
         inp[i, 0, categories.index(c)] = 1
     tar.append(len(categories) - 1)
-    tar = torch.LongTensor(tar, device=gpu)
+    tar = torch.LongTensor(tar)
     tar.unsqueeze_(-1)
-    return inp, tar
+    return inp.to(gpu), tar.to(gpu)
 
 
 for n_layers in (3, 6, 9, 12):
     print('Training lstm of {} layers...'.format(n_layers))
     net = LayeredLSTM(n_letters, n_letters, num_layers=n_layers).to(gpu)
     criterion = nn.NLLLoss()
-    lr = 0.000005
+    lr = 0.005 / (10 * (n_layers/3))
     optimizer = optim.Adam(net.parameters(), lr=lr)
 
-    for epoch in range(5):
+    for epoch in range(2 + n_layers//3):
         count = 0
         shuffle(data)
         for d in data:
